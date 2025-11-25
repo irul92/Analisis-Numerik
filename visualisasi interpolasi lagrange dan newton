@@ -1,0 +1,79 @@
+-- Visualisasi Interpolasi Lagrange --
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.array([1.0, 2.0, 3.0])
+y = np.array([3.0, 8.0, 15.0])
+xp = 2.5
+
+def lagrange_interpolasi(x,y,xp):
+    p = 0
+    n = len(x)
+    for i in range (n):
+      L = 1.0
+      for j in range (n):
+        if j != i:
+          L *= (xp - x[j])/(x[i] - x[j])
+      p += y[i]*L
+    return p
+
+L_value = lagrange_interpolasi(x,y,xp)
+print("Lagrange f(2.5) =", L_value)
+
+--Grafik Interpolasi Lagrange--
+plt.plot(x, y)
+plt.plot(x, y, 'bo', label='Data') # Titik data
+plt.plot(xp, L_value, 'ro', label='Perkiraan')
+plt.xlabel('x')
+plt.ylabel('y')
+plt.title('Visualisasi Interpolasi Lagrange')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+-- Visualisasi Interpolasi Newton --
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.array([1.0, 2.0, 3.0])
+y = np.array([3.0, 8.0, 15.0])
+xp = 2.5
+
+def divided_difference(x, y):
+    n = len(x)
+    dd = np.zeros([n, n])
+    dd[:, 0] = y
+
+    for j in range(1, n):
+        for i in range(n - j):
+            dd[i][j] = (dd[i+1][j-1] - dd[i][j-1]) / (x[i+j] - x[i])
+    return dd
+
+def newton_interpolasi(dd, x, xp):
+    n = len(x)
+    p = dd[0][0]        
+    product = 1.0
+
+    for i in range(1, n):
+        product *= (xp - x[i-1])
+        p += dd[0][i] * product
+    return p
+
+dd = divided_difference(x, y)
+N_value = newton_interpolasi(dd, x, xp)
+
+print("\nNewton f(2.5) =", N_value)
+
+
+-- Grafik Interpolasi Newton --
+plt.plot(x, y)
+plt.plot(x, y, 'bo', label='Data')
+plt.plot(xp, N_value, 'ro', label='Perkiraan')
+plt.xlabel('x')
+plt.ylabel('f(x)')
+plt.title('Visualisasi Interpolasi Newton')
+plt.legend()
+plt.grid(True)
+plt.show()
